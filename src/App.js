@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Initial_State = [
 	{ id: 1, title: "Shopping", done: true },
@@ -6,11 +6,23 @@ const Initial_State = [
 ];
 
 function App() {
-	const [list, setList] = useState(Initial_State);
+	const [list, setList] = useState(() => {
+		const savedList = localStorage.getItem("list");
+
+		if (savedList) {
+			return JSON.parse(savedList);
+		} else {
+			return [];
+		}
+	});
 	const [newTitle, setNewTitle] = useState("");
 
+	useEffect(() => {
+		localStorage.setItem("list", JSON.stringify(list));
+	}, [list]);
+
 	const addTitle = () => {
-		setList([...list, { id: Math.random(), title: newTitle, done: false }]);
+		setList([...list, { id: list.length + 1, title: newTitle, done: false }]);
 		setNewTitle("");
 	};
 
